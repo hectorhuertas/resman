@@ -8,6 +8,9 @@ import "os"
 // import "os/exec"
 
 func main() {
+	CODEPATH:=os.Getenv("HOME")+"/xdev"
+	fmt.Printf("%s\n", CODEPATH)
+	// fmt.Println("jsalkdfjaslf")
 	p1 := "/usr"
 	p2 := "/Users/hh/xdev/go/resource-manager"
 	// // binary, lookErr := exec.LookPath("git")
