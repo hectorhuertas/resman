@@ -7,7 +7,17 @@ import "os"
 import "path/filepath"
 import "os/exec"
 
-
+func GetRepos(path string) []string  {
+	repos := []string{}
+	filepath.Walk(path, func(path string, f os.FileInfo, err error) error {
+		if isGitRepo(path) {
+			repos = append(repos, path)
+			return filepath.SkipDir
+		}
+		return nil
+	})
+	return repos
+}
 func GetGitRepos(reposPaths *[]string) filepath.WalkFunc {
 	return func(path string, f os.FileInfo, err error) error {
 		// if path == "/Users/hh/xdev/repositive" {
@@ -19,6 +29,15 @@ func GetGitRepos(reposPaths *[]string) filepath.WalkFunc {
 		}
 		return nil
 	}
+}
+
+func GetModifiedRepos(path string) []string  {
+	repos := GetRepos(path)
+	return ModifiedRepos(repos)
+}
+func GetUnmodifiedRepos(path string) []string  {
+	repos := GetRepos(path)
+	return UnmodifiedRepos(repos)
 }
 
 func isGitRepo(path string) bool {

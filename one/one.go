@@ -4,9 +4,7 @@ import "fmt"
 
 // import "log"
 import "os"
-import "path/filepath"
-// import "os/exec"
-import  "resource-manager/local"
+import  "resource-manager/gitLocal"
 
 func main() {
 	CODEPATH := os.Getenv("HOME") + "/xdev"
@@ -17,12 +15,8 @@ func main() {
 	// cmd := exec.Command("/usr/bin/git", "status")
 	// output, err := cmd.Output()
 	// // fmt.Println(cmdX, output, "\n", args)
-	reposPaths := []string{}
-	filepath.Walk(CODEPATH, local.GetGitRepos(&reposPaths))
+	fmt.Printf("Clean: %v\n", gitLocal.GetUnmodifiedRepos(CODEPATH))
+	fmt.Printf("Dirty: %v\n", gitLocal.GetModifiedRepos(CODEPATH))
 
-	bob := local.UnmodifiedRepos(reposPaths)
-	fmt.Printf("Clean: %v\n", bob)
-
-	jar := local.ModifiedRepos(reposPaths)
-	fmt.Printf("Dirty: %v\n", jar)
+	fmt.Printf("All: %v\n", gitLocal.GetRepos(CODEPATH))
 }
