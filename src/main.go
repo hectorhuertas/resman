@@ -54,6 +54,8 @@ func unmodifiedRepos(reposPaths []string) []string {
 }
 
 func filterReposIfStatus(reposPaths []string, f func(string)bool) []string {
+	//TODO: This is only checking either the current or the master branch. What
+	// should be the proper check?
 	modifiedRepos := []string{}
 	for _, repoPath := range reposPaths {
 		out, _ := exec.Command("git", "-C", repoPath, "status", "--porcelain").Output()
