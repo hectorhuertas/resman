@@ -2,12 +2,25 @@ package main
 
 import "fmt"
 
-// import "log"
+import "log"
 import "os"
 import  "resource-manager/gitLocal"
+import "database/sql"
+import _ "github.com/lib/pq"
 
 func main() {
-	scan()
+	// scan()
+	db, err := sql.Open("postgres",
+		"user=postgres dbname=pqgotest sslmode=disable")
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = db.Ping()
+	if err != nil {
+		log.Fatal(err)
+		// do something here
+	}
+	defer db.Close()
 }
 
 func scan()  {
