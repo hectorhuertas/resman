@@ -1,1 +1,1 @@
-module github.com/hectorhuertas/resource-manager
+module github.com/hectorhuertas/resman

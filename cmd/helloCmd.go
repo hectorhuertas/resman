@@ -1,6 +1,6 @@
 package cmd
 
-import "github.com/hectorhuertas/resource-manager/hello"
+import "github.com/hectorhuertas/resman/hello"
 
 func HelloCmd() {
 	hello.Hola()
