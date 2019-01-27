@@ -1,11 +1,8 @@
 package git
 
-import "github.com/shurcooL/githubv4"
-import "golang.org/x/oauth2"
+import "github.com/hectorhuertas/resman/git/github"
 import (
-	"context"
 	"fmt"
-	"os"
 	"strings"
 )
 
@@ -37,27 +34,10 @@ func MockGet() gitList {
 }
 
 func Get() gitList {
-	src := oauth2.StaticTokenSource(
-		&oauth2.Token{AccessToken: os.Getenv("GITHUB_TOKEN")},
-	)
-	httpClient := oauth2.NewClient(context.Background(), src)
-
-	client := githubv4.NewClient(httpClient)
-
-	var query struct {
-		Viewer struct {
-			Login     githubv4.String
-			CreatedAt githubv4.DateTime
-		}
-	}
-
-	err := client.Query(context.Background(), &query, nil)
-	if err != nil {
-		// Handle error.
-	}
-	fmt.Println("    Login:", query.Viewer.Login)
-	fmt.Println("CreatedAt:", query.Viewer.CreatedAt)
-	fmt.Println("whatever")
+	u := github.User{"Pepe"}
+	fmt.Println(github.Repos(u))
+	o := github.Org{"uw-labs"}
+	fmt.Println(github.Repos(o))
 
 	var gits []git
 	gits = append(gits, git{Name: "resman", localPath: "/Users/hh/xdev/resman"})
