@@ -3,16 +3,17 @@ package git
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"path"
 	"path/filepath"
 	"strings"
-
-	"github.com/hectorhuertas/resman/git/github"
 )
 
 type git struct {
 	name      string
 	localPath string
+	size      string
+	status    string
 }
 
 func (g git) String() string {
@@ -23,9 +24,13 @@ type gitList []git
 
 func (gs gitList) String() string {
 	var ret strings.Builder
-	for _, g := range gs {
+	for i, g := range gs {
+		if i != 0 {
+			ret.WriteString("\n")
+		}
 		ret.WriteString(g.name)
-		ret.WriteString("\n")
+		ret.WriteString(" ")
+		ret.WriteString(g.status)
 	}
 	return ret.String()
 }
@@ -33,14 +38,19 @@ func (gs gitList) String() string {
 func Scan(root string, exclude []string) gitList {
 	paths, _ := findGitDirs(root, exclude)
 
-	u := github.User{"Pepe"}
-	fmt.Println(github.Repos(u))
-	o := github.Org{"uw-labs"}
-	fmt.Println(github.Repos(o))
+	//u := github.User{"Pepe"}
+	//fmt.Println(github.Repos(u))
+	//o := github.Org{"uw-labs"}
+	//fmt.Println(github.Repos(o))
 
 	var gits []git
 	for _, p := range paths {
-		gits = append(gits, git{name: path.Base(p), localPath: p})
+		out, _ := exec.Command("git", "-C", p, "status", "--porcelain").Output()
+		status := ""
+		if string(out) != "" {
+			status = "\u2757"
+		}
+		gits = append(gits, git{name: path.Base(p), localPath: p, status: status})
 
 	}
 	return gits
