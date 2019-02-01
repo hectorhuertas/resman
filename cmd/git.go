@@ -21,9 +21,9 @@ var gitCmd = &cobra.Command{
 	ValidArgs: []string{"git", "two"},
 	Run: func(cmd *cobra.Command, args []string) {
 		//fmt.Println(strings.Join(gitLocal.GetRepos("/Users/hh/xdev"), "\n"))
-		fmt.Println(cmd.Flag("root").Value)
-		fmt.Println(cmd.Flag("exclude").Value)
+		r := cmd.Flag("root").Value.String()
+		e := cmd.Flag("exclude").Value.String()
 		fmt.Print(git.MockGet())
-		git.Get()
+		git.Get(r, e)
 	},
 }

@@ -33,7 +33,9 @@ func MockGet() gitList {
 	return gits
 }
 
-func Get() gitList {
+func Get(root string, exclude string) gitList {
+	fmt.Println(root)
+	fmt.Println(exclude)
 	u := github.User{"Pepe"}
 	fmt.Println(github.Repos(u))
 	o := github.Org{"uw-labs"}
