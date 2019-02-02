@@ -12,7 +12,7 @@ import (
 type git struct {
 	name      string
 	localPath string
-	size      string
+	size      int64
 	status    string
 	origin    gitOrigin
 }
@@ -36,6 +36,18 @@ func (gs gitList) String() string {
 		ret.WriteString(g.status)
 		ret.WriteString(" ")
 		ret.WriteString(g.origin.host)
+		ret.WriteString(" ")
+		switch {
+		case g.size > 1024*1024*1024:
+			ret.WriteString(fmt.Sprintf("%.1fGi", float64(g.size)/1024/1024/1024))
+		case g.size > 1024*1024:
+			ret.WriteString(fmt.Sprintf("%.1fMi", float64(g.size)/1024/1024))
+		case g.size > 1024:
+			ret.WriteString(fmt.Sprintf("%.1fKi", float64(g.size)/1024))
+		default:
+			fmt.Printf("%d", g.size)
+			ret.WriteString(fmt.Sprintf("%v", g.size))
+		}
 	}
 	return ret.String()
 }
@@ -55,10 +67,9 @@ func Scan(root string, exclude []string) gitList {
 		if string(out) != "" {
 			status = "\u2757"
 		}
-		gits = append(gits, git{name: path.Base(p), localPath: p, status: status, origin: getOrigin(p)})
+		gits = append(gits, git{name: path.Base(p), localPath: p, status: status, origin: getOrigin(p), size: getSize(p)})
 	}
 	return gits
-
 }
 
 func findGitDirs(root string, exclude []string) (ret []string, err error) {
@@ -108,4 +119,18 @@ func getOrigin(path string) gitOrigin {
 		origin.owner = noHost[:secondSlashIndex]
 	}
 	return origin
+}
+
+func getSize(path string) int64 {
+	var size int64
+	filepath.Walk(path, func(_ string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if !info.IsDir() {
+			size += info.Size()
+		}
+		return err
+	})
+	return size
 }
