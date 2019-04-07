@@ -17,6 +17,21 @@ type git struct {
 	origin    gitOrigin
 }
 
+type Git struct {
+	name string
+}
+
+func (g *Git) Name() string {
+	return g.name
+}
+
+func New(name string) (Git, error) {
+	g := Git{
+		name: name,
+	}
+	return g, nil
+}
+
 func (g git) String() string {
 	return fmt.Sprintf("%s", g.name)
 }
@@ -133,4 +148,8 @@ func getSize(path string) int64 {
 		return err
 	})
 	return size
+}
+
+type RepositoryX interface {
+	Create(g Git) error
 }
