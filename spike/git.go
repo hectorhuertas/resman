@@ -1,12 +1,16 @@
 package git
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"os/exec"
 	"path"
 	"path/filepath"
 	"strings"
+
+	"github.com/google/go-github/v22/github"
+	"golang.org/x/oauth2"
 )
 
 type git struct {
@@ -97,6 +101,28 @@ func (gs gitList) String() string {
 }
 
 func Scan(root string, exclude []string) gitList {
+	ctx := context.Background()
+	ts := oauth2.StaticTokenSource(
+		&oauth2.Token{AccessToken: "access_token"},
+	)
+	tc := oauth2.NewClient(ctx, ts)
+	client := github.NewClient(tc)
+
+	opt := &github.RepositoryListOptions{Visibility: "private", Sort: "updated", Direction: "desc"}
+	//opt := &github.RepositoryListOptions{Visibility: "private", Type: "owner", Sort: "updated", Direction: "desc"}
+
+	repos, _, err := client.Repositories.List(context.Background(), "username", opt)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	for _, r := range repos {
+		fmt.Println(*r.Name)
+	}
+
+	//fmt.Printf("Recently updated repositories by %q: %v", user, github.Stringify(repos))
+
+	os.Exit(1)
 	paths, _ := findGitDirs(root, exclude)
 
 	//u := github.User{"Pepe"}

@@ -1,6 +1,7 @@
 module github.com/hectorhuertas/resman
 
 require (
+	github.com/google/go-github/v22 v22.0.0
 	github.com/google/pprof v0.0.0-20190109223431-e84dfd68c163 // indirect
 	github.com/ianlancetaylor/demangle v0.0.0-20181102032728-5e5cf60278f6 // indirect
 	github.com/shurcooL/githubv4 v0.0.0-20190119021625-d9689b595017
