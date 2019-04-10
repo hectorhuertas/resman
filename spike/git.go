@@ -25,6 +25,35 @@ func (g *Git) Name() string {
 	return g.name
 }
 
+type Creater interface {
+	Create(Git) error
+}
+
+type Repository struct {
+	Creater
+	Getter
+	Finder
+}
+type FindOptions struct {
+	Visibility string
+	Owner      string
+	Contains   string
+}
+
+type Finder interface {
+	FindAll(FindOptions) ([]Git, error)
+}
+
+type Getter interface {
+	Get() ([]Git, error)
+}
+
+type Local struct {
+	id     string //location
+	remote string //divide in two??
+	size   int
+}
+
 func New(name string) (Git, error) {
 	g := Git{
 		name: name,

@@ -1,8 +1,6 @@
 package memory
 
 import (
-	"fmt"
-
 	"github.com/hectorhuertas/resman/git"
 )
 
@@ -14,6 +12,7 @@ func (r *Repository) Create(g git.Git) error {
 	r.gits = append(r.gits, g)
 	return nil
 }
+
 func (r *Repository) Get(s string) (git.Git, error) {
 	for _, g := range r.gits {
 		if g.Name() == s {
@@ -22,12 +21,13 @@ func (r *Repository) Get(s string) (git.Git, error) {
 	}
 	return git.Git{}, nil
 }
-func (r *Repository) GetAll() ([]git.Git, error) {
+
+func (r *Repository) Find(opt ...git.FindOptions) ([]git.Git, error) {
 	return r.gits, nil
 }
 
-func main() {
-	fmt.Println("vim-go")
+func (r *Repository) GetAll() ([]git.Git, error) {
+	return r.gits, nil
 }
 
 func New() Repository {
