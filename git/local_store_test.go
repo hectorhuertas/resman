@@ -118,14 +118,19 @@ func testLocalStorePort(ls git.LocalStore, t *testing.T) {
 
 // fmt.Printf("got: %+v\n", locals)
 func TestLocalStorePort(t *testing.T) {
-	memls := memlocal.New()
-	// ls := local.New()
-	before := len(memls.GetAll())
+	var localStores []git.LocalStore
+	localStores = append(localStores, memlocal.New())
+	//localStores = append(localStores, local.New())
 
-	testLocalStorePort(memls, t)
-	after := len(memls.GetAll())
-	if before != after {
-		t.Fatal("IMPORTANT ERROR: Store left in a different state after testing")
+	for _, ls := range localStores {
+		before := len(ls.GetAll())
+
+		testLocalStorePort(ls, t)
+
+		after := len(ls.GetAll())
+
+		if before != after {
+			t.Fatal("IMPORTANT ERROR: Store left in a different state after testing")
+		}
 	}
-	//testLocalStorePort(ls,t)
 }
