@@ -7,7 +7,3 @@ type Git struct {
 type Local struct {
 	Location string
 }
-
-func (l *Local) ID() string {
-	return l.Location
-}

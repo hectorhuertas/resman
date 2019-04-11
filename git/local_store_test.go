@@ -21,7 +21,7 @@ func testLocalStorePort(ls git.LocalStore, t *testing.T) {
 		}
 
 		// When
-		got, err := ls.Get(l.ID())
+		got, err := ls.Get(l.Location)
 
 		// Then
 		if err != nil {
@@ -32,10 +32,10 @@ func testLocalStorePort(ls git.LocalStore, t *testing.T) {
 		}
 
 		// When
-		ls.Delete(got.ID())
+		ls.Delete(got.Location)
 
 		// Then
-		_, err = ls.Get(l.ID())
+		_, err = ls.Get(l.Location)
 		if err == nil {
 			t.Error("cannot delete local")
 		}

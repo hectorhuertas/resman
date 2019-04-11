@@ -20,7 +20,7 @@ func (s *Store) Add(l git.Local) error {
 		return errors.New("add error: invalid location")
 	}
 
-	_, err := s.Get(l.ID())
+	_, err := s.Get(l.Location)
 	if err == nil {
 		return errors.New("add error: local already exists")
 	}
