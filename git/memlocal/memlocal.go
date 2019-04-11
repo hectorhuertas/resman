@@ -39,6 +39,10 @@ func (s *Store) Get(loc string) (git.Local, error) {
 	return git.Local{}, errors.New("get error: not found")
 }
 
+func (s *Store) GetAll() []git.Local {
+	return s.locals
+}
+
 func (s *Store) Delete(loc string) {
 	for i, l := range s.locals {
 		if l.Location == loc {
