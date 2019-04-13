@@ -2,6 +2,7 @@ package memlocal
 
 import (
 	"errors"
+	"math/rand"
 
 	"github.com/hectorhuertas/resman/git"
 )
@@ -50,4 +51,14 @@ func (s *Store) Delete(loc string) {
 			return
 		}
 	}
+}
+
+// Generate 30 chars long [a-zA-Z] non-crypto random strings
+func (s *Store) GenerateLocation() string {
+	const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	b := make([]byte, 30)
+	for i := range b {
+		b[i] = letterBytes[rand.Intn(len(letterBytes))]
+	}
+	return string(b)
 }

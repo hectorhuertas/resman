@@ -10,10 +10,11 @@ import (
 func testLocalStorePort(ls git.LocalStore, t *testing.T) {
 	t.Run("single add, get and delete", func(t *testing.T) {
 		// Given
-		newLocal := git.Local{Location: "somewhere"}
+		loc := ls.GenerateLocation()
+		l := git.Local{Location: loc}
 
 		// When
-		err := ls.Add(newLocal)
+		err := ls.Add(l)
 
 		// Then
 		if err != nil {
@@ -21,50 +22,53 @@ func testLocalStorePort(ls git.LocalStore, t *testing.T) {
 		}
 
 		// When
-		got, err := ls.Get(newLocal.Location)
+		got, err := ls.Get(loc)
 
 		// Then
 		if err != nil {
 			t.Error("cannot get local")
 		}
-		if got != newLocal {
-			t.Errorf("got wrong local: %v, expected: %v", got, newLocal)
+		if got != l {
+			t.Errorf("got wrong local: %v, expected: %v", got, l)
 		}
 
 		// When
 		ls.Delete(got.Location)
 
 		// Then
-		_, err = ls.Get(newLocal.Location)
+		_, err = ls.Get(loc)
 		if err == nil {
 			t.Error("cannot delete local")
 		}
 	})
 	t.Run("multiple add, get and delete", func(t *testing.T) {
 		// Given
-		newLocal1 := git.Local{Location: "somewhere"}
-		defer ls.Delete(newLocal1.Location)
-		ls.Add(newLocal1)
-		newLocal2 := git.Local{Location: "here"}
-		defer ls.Delete(newLocal2.Location)
-		ls.Add(newLocal2)
-		newLocal3 := git.Local{Location: "there"}
-		defer ls.Delete(newLocal3.Location)
-		ls.Add(newLocal3)
+		loc1 := ls.GenerateLocation()
+		loc2 := ls.GenerateLocation()
+		loc3 := ls.GenerateLocation()
+		l1 := git.Local{Location: loc1}
+		l2 := git.Local{Location: loc2}
+		l3 := git.Local{Location: loc3}
+		ls.Add(l1)
+		ls.Add(l2)
+		ls.Add(l3)
+		defer ls.Delete(loc1)
+		defer ls.Delete(loc2)
+		defer ls.Delete(loc3)
 
 		// When
-		got, _ := ls.Get(newLocal2.Location)
+		got, _ := ls.Get(loc2)
 
 		// Then
-		if got != newLocal2 {
-			t.Errorf("got wrong local: %v, expected: %v", got, newLocal2)
+		if got != l2 {
+			t.Errorf("got wrong local: %v, expected: %v", got, l2)
 		}
 
 		// When
-		ls.Delete(newLocal3.Location)
+		ls.Delete(loc3)
 
 		// Then
-		_, err := ls.Get(newLocal3.Location)
+		_, err := ls.Get(loc3)
 		if err == nil {
 			t.Error("cannot delete local")
 		}
@@ -83,10 +87,11 @@ func testLocalStorePort(ls git.LocalStore, t *testing.T) {
 	})
 	t.Run("cannot add in existing location", func(t *testing.T) {
 		// Given
-		l1 := git.Local{Location: "somewhere"}
-		defer ls.Delete(l1.Location)
-		l2 := git.Local{Location: "somewhere"}
-		defer ls.Delete(l2.Location)
+		loc := ls.GenerateLocation()
+		l1 := git.Local{Location: loc}
+		l2 := git.Local{Location: loc}
+		defer ls.Delete(loc)
+		defer ls.Delete(loc)
 		ls.Add(l1)
 
 		// When
@@ -99,19 +104,20 @@ func testLocalStorePort(ls git.LocalStore, t *testing.T) {
 	})
 	t.Run("get all", func(t *testing.T) {
 		// Given
-		l1 := git.Local{Location: "somewhere"}
-		defer ls.Delete(l1.Location)
-		l2 := git.Local{Location: "there"}
-		defer ls.Delete(l2.Location)
-		ls.Add(l1)
-		ls.Add(l2)
+		times := 3
+		for i := 1; i <= times; i++ {
+			loc := ls.GenerateLocation()
+			l := git.Local{Location: loc}
+			ls.Add(l)
+			defer ls.Delete(loc)
+		}
 
 		// When
-		locals := ls.GetAll()
+		localsNumber := len(ls.GetAll())
 
 		// Then
-		if 2 != len(locals) {
-			t.Errorf("got %v, expected 2", len(locals))
+		if localsNumber != times {
+			t.Errorf("got %v, expected %v", localsNumber, times)
 		}
 	})
 }
@@ -120,6 +126,7 @@ func testLocalStorePort(ls git.LocalStore, t *testing.T) {
 func TestLocalStorePort(t *testing.T) {
 	var localStores []git.LocalStore
 	localStores = append(localStores, memlocal.New())
+	// To do: add non-memory store only if running integration tests
 	//localStores = append(localStores, local.New())
 
 	for _, ls := range localStores {

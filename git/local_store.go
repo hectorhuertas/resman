@@ -1,10 +1,15 @@
 package git
 
 type LocalStore interface {
+	LocationGenerator
 	Adder
 	Getter
 	GetAller
 	Deleter
+}
+
+type LocationGenerator interface {
+	GenerateLocation() string
 }
 
 type Adder interface {
